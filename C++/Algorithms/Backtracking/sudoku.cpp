@@ -1,3 +1,5 @@
+// A program to solve sudoku using backtracking algorithm
+
 #include <iostream>
 #include <map>
 #include <algorithm>
@@ -7,6 +9,7 @@ constexpr int GRID_SIZE = 9;
 
 class Grid {
     private:
+        // Create a solvable sudoku grid
         std::array<std::array<int, GRID_SIZE>, GRID_SIZE> grid = {{
             { 3, 1, 6, 5, 7, 8, 4, 9, 2 },
             { 5, 2, 9, 1, 3, 4, 7, 6, 8 },
@@ -20,6 +23,7 @@ class Grid {
         }};
 
         bool check() {
+            // Function to check if sudoku grid is solved
             std::array<std::map<int, int>, GRID_SIZE> rows;
             std::array<std::map<int, int>, GRID_SIZE> cols;
             std::array<std::array<std::map<int, int>,3>,3> boxes;
@@ -30,17 +34,19 @@ class Grid {
                     cols[col][grid[row][col]] += 1;
                     boxes[row/3][col/3][grid[row][col]] += 1;
 
+                    // If any of the numbers repeats in row/column/box, mark solution as wrong
                     if (rows[row][grid[row][col]] > 1 || 
                         cols[col][grid[row][col]] > 1 || 
                         boxes[row/3][col/3][grid[row][col]] > 1) {
                             return false;
-                        }
+                    }
                 }
             }
             return true;
         }
     public:
         void print() {
+            // Print the sudoku grid
             for (const auto &row: grid) {
                 for (short i = 0; i < GRID_SIZE; ++i) {
                     std::cout << "+---";
@@ -57,19 +63,24 @@ class Grid {
             std::cout << '+' << std::endl;
         }
         bool solve(int row, int col) {
+            // A recursive funciton that is used to solve the grid
             if (row == GRID_SIZE - 1 && col == GRID_SIZE) {
+                // If we' re on last row and colum of the grid, check if it's solved correctly
                 if (check())
                     return true;
                 return false;
             }
             if (col == GRID_SIZE) {
+                // Go to next row
                 ++row;
                 col = 0;
             }
             if (grid[row][col] != 0) {
+                // If pole is not empty, leave it as it is
                 return solve(row, col+1);
             }
             for (int num = 1; num <= 9; ++num) {
+                // Try numbers from 1 to 9 as a solution of the pole
                 grid[row][col] = num;
                 if (solve(row, col+1))
                     return true;
